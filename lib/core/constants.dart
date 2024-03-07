@@ -7,13 +7,17 @@ const double kSmallScreenWidth = 360;
 const double kMediumScreenWidth = 480;
 
 ///640
-const double kBigScreenWidth = 640;
+const double kLargeScreenWidth = 640;
 
-/// 360 * 3
-const double kLargerScreenWidth = 360 * 3;
+///720
+const double kXLScreenWidth = 720;
+
+
+/// 360 * 3 / 1080 == 480 * 2
+const double k2XLScreenWidth = 360 * 3;
 
 /// 480 * 3
-const double kLargestScreenWidth = 480 * 3;
+const double k3XLScreenWidth = 480 * 3;
 
 
 //* Containers
