@@ -18,20 +18,17 @@ class VideoQueueList extends StatelessWidget {
         Positioned(
           top: 16,
           right: 16,
-          child: Theme(
-            data: Theme.of(context).copyWith(primaryColor: Colors.white),
-            child: FloatingActionButton(
-              backgroundColor: Theme.of(context).colorScheme.surface,
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("hello world!"))
-                );
-                print("Does this import?");
-              },
-              child: Icon(
-                Icons.add,
-                color: Theme.of(context).colorScheme.background,
-              ),
+          child: FloatingActionButton(
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("hello world!"))
+              );
+              print("Does this import?");
+            },
+            child: Icon(
+              Icons.add,
+              color: Theme.of(context).colorScheme.background,
             ),
           ),
         ),
