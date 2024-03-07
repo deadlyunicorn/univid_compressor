@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:flutter/services.dart";
 import "package:univid_compressor/skeleton/skeleton.dart";
 
 void main() {
@@ -10,6 +11,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations(
+      <DeviceOrientation>[DeviceOrientation.landscapeLeft],
+    );
+
     return MaterialApp(
       title: "Univid Compressor",
       theme: ThemeData(
