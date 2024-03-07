@@ -11,19 +11,21 @@ class Skeleton extends StatelessWidget {
   Widget build(BuildContext context) {
   
     return const Scaffold(
-      body: Center(
-        child: SizedBox(
-          width: kLargestScreenWidth,
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 16),
-            child: ColumnWithSpacings(
-              spacing: 16,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                VideoQueueSection(),
-                CompressionSettingsSection(),
-              ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: SizedBox(
+            width: k3XLScreenWidth,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 16),
+              child: ColumnWithSpacings(
+                spacing: 16,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  VideoQueueSection(),
+                  CompressionSettingsSection(),
+                ],
+              ),
             ),
           ),
         ),
