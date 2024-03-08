@@ -12,15 +12,14 @@ class ListContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      // height: double.infinity,
       width: MediaQuery.sizeOf(context).width / 2 < kMediumScreenWidth
           ? kSmallScreenWidth
           : kMediumScreenWidth,
-      child: Expanded(
-        child: Padding(
-          ///? Leave space for Stack() overlaying eleents
-          padding: const EdgeInsets.all(32.0),
-          child: CustomContainer(child: child),
-        ),
+      child: Padding(
+        ///? Leave space for Stack() overlaying eleents
+        padding: const EdgeInsets.all(32.0),
+        child: CustomContainer(child: child),
       ),
     );
   }
