@@ -23,13 +23,13 @@ const double k3XLScreenWidth = 480 * 3;
 //* Containers
 
 ///120
-const double kSmallContainerWidth = 120;
+const double kSmallContainerWidth = 128;
 
 ///160
 const double kMediumContainerWidth = 160;
 
 ///240
-const double kLargeContainerWidth = 240;
+const double kLargeContainerWidth = 256;
 
 //* Durations
 
