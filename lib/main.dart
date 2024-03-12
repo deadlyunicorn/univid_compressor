@@ -47,6 +47,14 @@ class MyApp extends StatelessWidget {
             color: _platinum,
           ),
         ),
+        iconButtonTheme: const IconButtonThemeData(
+          style: ButtonStyle(
+            shape: MaterialStatePropertyAll<OutlinedBorder>(_buttonShape),
+          ),
+        ),
+        buttonTheme: const ButtonThemeData(
+          shape: _buttonShape,
+        ),
       ),
       home: const Skeleton(),
     );
@@ -57,4 +65,8 @@ class MyApp extends StatelessWidget {
   static const Color _surface = Color(0xFFffc83a);
   static const Color _error = Color(0xFFDF2935);
   static const Color _platinum = Color(0xFFE6E8E6);
+
+  static const OutlinedBorder _buttonShape = RoundedRectangleBorder(
+    borderRadius: BorderRadius.all(Radius.circular(4)),
+  );
 }
