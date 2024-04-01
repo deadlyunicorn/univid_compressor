@@ -1,3 +1,4 @@
+import "package:desktop_drop/desktop_drop.dart";
 import "package:flutter/material.dart";
 import "package:univid_compressor/core/errors/exceptions.dart";
 import "package:univid_compressor/core/video_details.dart";
@@ -22,37 +23,68 @@ class _VideoQueueListState extends State<VideoQueueList> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        ListContainer(
-          child: ListView.builder(
-            itemBuilder: (BuildContext context, int index) {
-              return VideoPreviewContainer(
-                removeSelf: () {
-                  setState(() {
-                    videoList.removeAt(index);
-                  });
-                },
-                videoDetails: videoList[index],
-              );
-            },
-            itemCount: videoList.length,
+    return DropTarget(
+      onDragDone: (DropDoneDetails details) async {
+        final List<VideoDetails> videos =
+            await VideoImport.importVideoDetailsListFromDesktopDrop(details);
+
+        addVideos(videos);
+      },
+      child: Stack(
+        children: <Widget>[
+          ListContainer(
+            child: videoList.isEmpty
+                ? const Center(child: Text("No videos imported"))
+                : ListView.builder(
+                    itemBuilder: (BuildContext context, int index) {
+                      return VideoPreviewContainer(
+                        removeSelf: () {
+                          setState(() {
+                            videoList.removeAt(index);
+                          });
+                        },
+                        videoDetails: videoList[index],
+                      );
+                    },
+                    itemCount: videoList.length,
+                  ),
           ),
-        ),
-        Positioned(
-          top: 16,
-          right: 16,
-          child: FloatingActionButton(
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            onPressed: importVideos,
-            child: Icon(
-              Icons.add,
-              color: Theme.of(context).colorScheme.background,
+          Positioned(
+            top: 16,
+            right: 16,
+            child: FloatingActionButton(
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              onPressed: importVideos,
+              child: Icon(
+                Icons.add,
+                color: Theme.of(context).colorScheme.background,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
+  }
+
+  ///Returns new videos that should have been added.
+  int addVideos(Iterable<VideoDetails> candidateVideos) {
+    final Iterable<String> alreadyImportedVideoFileUrls = videoList.map(
+      (VideoDetails alreadyImportedVideo) =>
+          alreadyImportedVideo.fileReference.path,
+    );
+
+    final Iterable<VideoDetails> newVideos = candidateVideos.where(
+      (VideoDetails candidateVideo) => !alreadyImportedVideoFileUrls
+          .contains(candidateVideo.fileReference.path),
+    );
+
+    final int videosToBeAddedLength = newVideos.length;
+
+    setState(() {
+      videoList.addAll(newVideos);
+    });
+
+    return videosToBeAddedLength;
   }
 
   Future<void> importVideos() async {
@@ -60,11 +92,7 @@ class _VideoQueueListState extends State<VideoQueueList> {
       final List<VideoDetails> videos =
           await VideoImport.importVideoDetailsListFromFilePicker();
 
-      setState(
-        () {
-          videoList.addAll(videos);
-        },
-      );
+      addVideos(videos);
     } on NoFilesFoundExcepetion {
       if (mounted) {
         showErrorSnackbar(
