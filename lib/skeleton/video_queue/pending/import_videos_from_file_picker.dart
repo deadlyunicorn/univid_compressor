@@ -1,4 +1,6 @@
 import "dart:io";
+import "package:cross_file/cross_file.dart";
+import "package:desktop_drop/desktop_drop.dart";
 
 import "package:file_picker/file_picker.dart";
 import "package:univid_compressor/core/errors/exceptions.dart";
@@ -31,6 +33,30 @@ class VideoImport {
             ),
           )
           .toList();
+    } else {
+      throw NoFilesFoundExcepetion();
+    }
+  }
+
+  static Future<List<VideoDetails>> importVideoDetailsListFromDesktopDrop(
+    DropDoneDetails details,
+  ) async {
+    final List<XFile> xFiles = details.files;
+
+    if (xFiles.isNotEmpty) {
+      return xFiles.map((XFile xFile) {
+        final File file = File(xFile.path);
+        if (!file.existsSync()) {
+          throw FileErrorException(
+            fileName: xFile.name,
+          );
+        }
+        return VideoDetails(
+          sizeInBytes: file.lengthSync(),
+          name: xFile.name,
+          fileReference: File(xFile.path),
+        );
+      }).toList();
     } else {
       throw NoFilesFoundExcepetion();
     }
