@@ -41,6 +41,7 @@ dependencies:
   cross_file: ^0.3.4+1
   provider: ^6.1.2
   path_provider: ^2.1.2
+  http: ^1.2.1
 
 dev_dependencies:
   flutter_test:
