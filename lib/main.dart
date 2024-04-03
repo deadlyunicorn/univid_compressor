@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
           onBackground: _platinum,
           surface: _surface,
           onSurface: _platinum,
+
         ),
         useMaterial3: true,
         textButtonTheme: TextButtonThemeData(
@@ -55,6 +56,10 @@ class MyApp extends StatelessWidget {
         buttonTheme: const ButtonThemeData(
           shape: _buttonShape,
         ),
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
+          color: _surface,
+          linearTrackColor: Colors.red,
+        ),
       ),
       home: const Skeleton(),
     );
@@ -63,7 +68,7 @@ class MyApp extends StatelessWidget {
   static const Color _background = Color(0xFF2d3046);
   static const Color _primary = Color(0xFF1b998b);
   static const Color _surface = Color(0xFFffc83a);
-  static const Color _error = Color(0xFFDF2935);
+  static const Color _error = Colors.red;
   static const Color _platinum = Color(0xFFE6E8E6);
 
   static const OutlinedBorder _buttonShape = RoundedRectangleBorder(
