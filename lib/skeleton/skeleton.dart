@@ -21,7 +21,7 @@ class Skeleton extends StatelessWidget {
               child: ChangeNotifierProvider<FFMpegController>(
                 create: (BuildContext context) => FFMpegController.initialize(),
                 builder: (BuildContext context, Widget? child) {
-                  return context.watch<FFMpegController>().binaryExists
+                  return context.watch<FFMpegController>().ffmpegExists
                       ? const MainApp()
                       : const SetupFFMpeg();
                 },

@@ -15,8 +15,8 @@ class VideoQueueSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: max( MediaQuery.sizeOf(context).height * 0.7, kMediumScreenWidth),
-      child: const RowWithSpacings( 
+      height: max(MediaQuery.sizeOf(context).height * 0.7, kMediumScreenWidth),
+      child: const RowWithSpacings(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         spacing: 16,
         children: <Widget>[
