@@ -1,6 +1,7 @@
 import "dart:io";
 
 import "package:flutter/material.dart";
+import "package:univid_compressor/core/business/univid_filesystem.dart";
 
 class FFMpegController with ChangeNotifier {
   //TODO Getter for FFMPeg type that we are using
@@ -48,20 +49,25 @@ class FFMpegController with ChangeNotifier {
         ffmpegType = FFMpegType.nativeBinaries;
         ffmpegExists = true;
       } else {
-        //TODO Check if we can execute ffmpeg from the static binaries
-        //TODO ON The project's documents directory.
+        checkForStaticBinaries();
       }
     } else {
       setupError = SetupError.invalidPlatform;
     }
   }
 
-  void checkForStaticBinaries() {
-    //TODO
-    if (true) //?exists
+  Future<void> checkForStaticBinaries() async {
+    final String path = (await UnividFilesystem.ffmpegDir).path;
+    final bool canExecuteFFmpeg = await Process.run(
+      "$path/ffmpeg",
+      <String>[],
+      runInShell: true,
+    ).then((ProcessResult value) => value.exitCode == 1);
+    if (canExecuteFFmpeg) //?exists
     {
       ffmpegExists = true;
       ffmpegType = FFMpegType.staticBinaries;
+      notifyListeners();
     }
   }
 }
