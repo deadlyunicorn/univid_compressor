@@ -6,3 +6,6 @@ class FileErrorException implements Exception {
     required this.fileName,
   });
 }
+
+class SystemNotSupportedException implements Exception {}
+class MD5CheckFailedException implements Exception {}
