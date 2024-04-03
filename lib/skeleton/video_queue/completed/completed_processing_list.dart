@@ -8,6 +8,13 @@ class CompletedProcessingList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ListContainer(child: Column());
+    bool isEmpty = true;
+
+    return ListContainer(
+      //TODO HERE
+      child: isEmpty
+          ? const Center(child: Text("No videos converted"))
+          : const Column(),
+    );
   }
 }
