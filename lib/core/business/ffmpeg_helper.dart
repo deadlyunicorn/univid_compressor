@@ -19,7 +19,7 @@ class FFMpegController with ChangeNotifier {
 
   bool _ffmpegExists = false;
   bool get ffmpegExists => _ffmpegExists;
-  FFMpegType ffmpegType = FFMpegType.ffmpegKit;
+  late final FFMpegType _ffmpegType;
 
   SetupError? _setupError;
   SetupError? get setupError => _setupError;
@@ -37,7 +37,7 @@ class FFMpegController with ChangeNotifier {
   FFMpegController.initialize() {
     if (Platform.isAndroid || Platform.isIOS) {
       ffmpegExists = true;
-      ffmpegType = FFMpegType.ffmpegKit;
+      _ffmpegType = FFMpegType.ffmpegKit;
     } else if (Platform.isLinux) {
       final int exitCode =
           Process.runSync("ffmpeg", <String>[], runInShell: true).exitCode;
@@ -46,7 +46,7 @@ class FFMpegController with ChangeNotifier {
             "TESTING_STATIC_FFMPEG",
             defaultValue: false,
           )) {
-        ffmpegType = FFMpegType.nativeBinaries;
+        _ffmpegType = FFMpegType.nativeBinaries;
         ffmpegExists = true;
       } else {
         checkForStaticBinaries();
@@ -66,10 +66,21 @@ class FFMpegController with ChangeNotifier {
     if (canExecuteFFmpeg) //?exists
     {
       ffmpegExists = true;
-      ffmpegType = FFMpegType.staticBinaries;
+      _ffmpegType = FFMpegType.staticBinaries;
       notifyListeners();
     }
   }
+
+  Future<String> execute( String command )async{
+    switch( _ffmpegType ){
+      case FFMpegType.ffmpegKit:
+        throw UnimplementedError(); // TODO
+      case FFMpegType.nativeBinaries:
+        return command;
+      case FFMpegType.staticBinaries:
+        throw UnimplementedError(); // TODO
+    }
+  } 
 }
 
 class FFmpegSetup {}
@@ -81,6 +92,10 @@ enum SetupError {
   connectionError,
 }
 
+
+/// 1. ffmpegKit<br>
+/// 2. nativeBinaries: can execute from terminal<br>
+/// 3. staticBinaries: we have downloaded the zip from the official to document
 enum FFMpegType {
   ffmpegKit,
   nativeBinaries, //? can execute from terminal

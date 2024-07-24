@@ -1,9 +1,12 @@
 import "dart:io";
 
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
+import "package:univid_compressor/core/business/ffmpeg_helper.dart";
 import "package:univid_compressor/core/constants.dart";
 import "package:univid_compressor/core/video_details.dart";
 import "package:univid_compressor/core/widgets.dart";
+import "package:univid_compressor/core/widgets/snackbars.dart";
 
 class VideoPreviewContainer extends StatelessWidget {
   const VideoPreviewContainer({
@@ -54,7 +57,13 @@ class VideoPreviewContainer extends StatelessWidget {
                       spacing: 4,
                       children: <Widget>[
                         TextButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            final result = await context
+                                .read<FFMpegController>()
+                                .execute("hello wor23ld");
+
+                            showErrorSnackbar(
+                                context: context, message: result);
                             //? Ideas: For Linux download the binary and dependencies and execute ffmpeg commands based on it.
                             // FFmpegKit.execute(
                             //     "-i ${videoDetails.fileReference.path}");
