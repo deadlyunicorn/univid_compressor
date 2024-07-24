@@ -69,7 +69,7 @@ class VideoPreviewContainer extends StatelessWidget {
                           message:
                               "hello world", //TODO Display video details here
                           child: Icon(
-                            color: Theme.of(context).colorScheme.surface,
+                            color: Theme.of(context).colorScheme.secondary,
                             Icons.info,
                           ),
                         ),
