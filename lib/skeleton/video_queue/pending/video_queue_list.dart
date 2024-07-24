@@ -53,11 +53,11 @@ class _VideoQueueListState extends State<VideoQueueList> {
             top: 16,
             right: 16,
             child: FloatingActionButton(
-              backgroundColor: Theme.of(context).colorScheme.surface,
+              backgroundColor: Theme.of(context).colorScheme.secondary,
               onPressed: importVideos,
               child: Icon(
                 Icons.add,
-                color: Theme.of(context).colorScheme.background,
+                color: Theme.of(context).colorScheme.surface,
               ),
             ),
           ),

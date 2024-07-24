@@ -14,7 +14,7 @@ class StartConvertingSelectedButton extends StatelessWidget {
         Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: Theme.of(context).colorScheme.surface,
+                  primary: Theme.of(context).colorScheme.secondary,
                 ),
           ),
           child: TextButton(

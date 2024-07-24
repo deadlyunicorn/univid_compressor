@@ -22,20 +22,17 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.dark,
           primary: _primary,
           onPrimary: _platinum,
-          secondary: _primary,
-          onSecondary: _platinum,
+          secondary: _secondary,
+          onSecondary: _secondary,
           error: _error,
           onError: _platinum,
-          background: _background,
-          onBackground: _platinum,
           surface: _surface,
           onSurface: _platinum,
-
         ),
         useMaterial3: true,
         textButtonTheme: TextButtonThemeData(
           style: ButtonStyle(
-            shape: MaterialStatePropertyAll<OutlinedBorder>(
+            shape: WidgetStatePropertyAll<OutlinedBorder>(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -50,14 +47,14 @@ class MyApp extends StatelessWidget {
         ),
         iconButtonTheme: const IconButtonThemeData(
           style: ButtonStyle(
-            shape: MaterialStatePropertyAll<OutlinedBorder>(_buttonShape),
+            shape: WidgetStatePropertyAll<OutlinedBorder>(_buttonShape),
           ),
         ),
         buttonTheme: const ButtonThemeData(
           shape: _buttonShape,
         ),
         progressIndicatorTheme: const ProgressIndicatorThemeData(
-          color: _surface,
+          color: _secondary,
           linearTrackColor: Colors.red,
         ),
       ),
@@ -65,10 +62,10 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  static const Color _background = Color(0xFF2d3046);
   static const Color _primary = Color(0xFF1b998b);
-  static const Color _surface = Color(0xFFffc83a);
+  static const Color _secondary = Color(0xFFffc83a);
   static const Color _error = Colors.red;
+  static const Color _surface = Color(0xFF2d3046);
   static const Color _platinum = Color(0xFFE6E8E6);
 
   static const OutlinedBorder _buttonShape = RoundedRectangleBorder(
