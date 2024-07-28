@@ -2,21 +2,29 @@ import "dart:io";
 
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
+import "package:univid_compressor/core/business/ffmpeg_entity.dart";
 import "package:univid_compressor/core/business/ffmpeg_helper.dart";
 import "package:univid_compressor/core/constants.dart";
 import "package:univid_compressor/core/video_details.dart";
 import "package:univid_compressor/core/widgets.dart";
 import "package:univid_compressor/core/widgets/snackbars.dart";
 
-class VideoPreviewContainer extends StatelessWidget {
+class VideoPreviewContainer extends StatefulWidget {
   const VideoPreviewContainer({
-    required this.videoDetails,
+    required VideoDetails videoDetails,
     required this.removeSelf,
     super.key,
-  });
+  }) : _videoDetails = videoDetails;
 
-  final VideoDetails videoDetails;
   final void Function() removeSelf;
+  final VideoDetails _videoDetails;
+
+  @override
+  State<VideoPreviewContainer> createState() => _VideoPreviewContainerState();
+}
+
+class _VideoPreviewContainerState extends State<VideoPreviewContainer> {
+  late VideoDetails videoDetails = widget._videoDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +57,7 @@ class VideoPreviewContainer extends StatelessWidget {
                     IconButton(
                       color: Theme.of(context).colorScheme.error,
                       onPressed: () {
-                        removeSelf();
+                        widget.removeSelf();
                       },
                       icon: const Icon(Icons.delete),
                     ),
@@ -58,12 +66,40 @@ class VideoPreviewContainer extends StatelessWidget {
                       children: <Widget>[
                         TextButton(
                           onPressed: () async {
-                            final result = await context
-                                .read<FFMpegController>()
-                                .execute("hello wor23ld");
+                            showNormalSnackbar(
+                              context: context,
+                              message: "Loading..",
+                            );
 
-                            showErrorSnackbar(
-                                context: context, message: result);
+                            try {
+                              final newVideo = await VideoEntity(
+                                initialVideo: videoDetails,
+                                controller: context.read<FFMpegController>(),
+                              ).changeScale(divideBy: 2);
+
+                              setState(() {
+                                videoDetails = newVideo;
+                              });
+
+                              if (context.mounted) {
+                                showNormalSnackbar(
+                                  context: context,
+                                  message: "Finished!",
+                                );
+                              }
+                            } catch (error) {
+                              rethrow;
+                              print(error);
+                              if (context.mounted) {
+                                showErrorSnackbar(
+                                  context: context,
+                                  message: "There was an error",
+                                );
+                              }
+                            }
+
+                            // showErrorSnackbar(
+                            // context: context, message: result);
                             //? Ideas: For Linux download the binary and dependencies and execute ffmpeg commands based on it.
                             // FFmpegKit.execute(
                             //     "-i ${videoDetails.fileReference.path}");
@@ -96,10 +132,6 @@ class VideoPreviewContainer extends StatelessWidget {
       ),
     );
   }
-
-  //TODO Future builder that gets the thumbnail
-  //TODO Video record date, length, resolution
-  //TODO Maybe we can hover over thumbnail and dislpay those ( if we don't playback)
 }
 
 class Thumbnail extends StatelessWidget {

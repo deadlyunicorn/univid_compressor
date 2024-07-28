@@ -71,29 +71,76 @@ class FFMpegController with ChangeNotifier {
     }
   }
 
-  Future<bool> resize({
-    required int height,
-    required int width,
+  Future<bool> execute({
+    required List<String> arguments,
+    required File inputFile,
+    required File outputFile,
   }) async {
-    throw UnimplementedError();  //TODO
-  }
-
-  Future<bool> changeQuality({
-    required int qualityLossPercentage,
-  }) async {
-    throw UnimplementedError(); //TODO
-  }
-
-  Future<bool> setFramerate({required int fps}) async {
-    throw UnimplementedError(); //TODO
-  }
-
-  Future<String> _execute(String command) async {
     switch (_ffmpegType) {
       case FFMpegType.ffmpegKit:
         throw UnimplementedError(); // TODO
       case FFMpegType.nativeBinaries:
-        return command;
+        final res = await Process.start(
+            'ffmpeg', ['-i', inputFile.path, ...arguments, outputFile.path]);
+
+        // final subscription = res.stdout.listen(
+        //   (event) {
+        //     print(event);
+        //   },
+        // );
+        // await for ( final data in res.stdout ){
+        //   print("new data: $data");
+        // };
+
+        print("started");
+
+        res.stdout.forEach(
+          (data) {
+            print("we have some data");
+            print(data);
+          },
+        );
+
+        await res.stderr.forEach(
+          (data) {
+            final parsedData = String.fromCharCodes(data);
+            print("ERROR!");
+            // print(parsedData);
+            if (parsedData.contains("frame")) {
+              if (parsedData.indexOf('fps') != -1) {
+                print("Progress ( Current frame: )");
+                print((int.tryParse(parsedData
+                    .substring(
+                        parsedData.indexOf('frame'), parsedData.indexOf('fps'))
+                    .replaceAll(' ','').split('=')[1])));
+              }
+            }
+            if (parsedData.contains('already exists.')) {
+              throw "File already exists";
+            } else if (parsedData
+                .contains('Invalid data found when processing input')) {
+              throw "Corrupted file";
+            }
+          },
+        );
+
+        print("finsihed");
+
+        // subscription.onError( (err){
+        //   print("ERROR!");
+        //   print( err);
+        // });
+
+        // subscription.onData( (data) {
+        //   print("Done");
+
+        // },);
+
+        // if (res.stderr?.length > 1) {
+        //   print(res.stderr);
+        //   throw "${res.stderr}";
+        // }
+        return true;
       case FFMpegType.staticBinaries:
         throw UnimplementedError(); // TODO
     }
