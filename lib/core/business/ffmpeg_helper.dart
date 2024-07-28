@@ -71,8 +71,25 @@ class FFMpegController with ChangeNotifier {
     }
   }
 
-  Future<String> execute( String command )async{
-    switch( _ffmpegType ){
+  Future<bool> resize({
+    required int height,
+    required int width,
+  }) async {
+    throw UnimplementedError();  //TODO
+  }
+
+  Future<bool> changeQuality({
+    required int qualityLossPercentage,
+  }) async {
+    throw UnimplementedError(); //TODO
+  }
+
+  Future<bool> setFramerate({required int fps}) async {
+    throw UnimplementedError(); //TODO
+  }
+
+  Future<String> _execute(String command) async {
+    switch (_ffmpegType) {
       case FFMpegType.ffmpegKit:
         throw UnimplementedError(); // TODO
       case FFMpegType.nativeBinaries:
@@ -80,7 +97,7 @@ class FFMpegController with ChangeNotifier {
       case FFMpegType.staticBinaries:
         throw UnimplementedError(); // TODO
     }
-  } 
+  }
 }
 
 class FFmpegSetup {}
@@ -91,7 +108,6 @@ enum SetupError {
   invalidPlatform,
   connectionError,
 }
-
 
 /// 1. ffmpegKit<br>
 /// 2. nativeBinaries: can execute from terminal<br>
