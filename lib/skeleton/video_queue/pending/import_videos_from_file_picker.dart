@@ -61,4 +61,7 @@ class VideoImport {
       throw NoFilesFoundExcepetion();
     }
   }
+
+  //TODO: move this class closer to video details
+  //TODO: include import from filepath.
 }

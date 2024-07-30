@@ -11,6 +11,8 @@ class VideoDetails {
   });
 
   final int sizeInBytes;
+
+  /// Filename including extension
   final String name;
   final File fileReference;
 
@@ -31,4 +33,3 @@ class VideoDetails {
             : "");
   }
 }
-
