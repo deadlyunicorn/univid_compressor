@@ -2,6 +2,7 @@ import "dart:io";
 
 import "package:flutter/material.dart";
 import "package:univid_compressor/core/business/univid_filesystem.dart";
+import "package:univid_compressor/extensions/file.dart";
 
 class FFMpegController with ChangeNotifier {
   //TODO Getter for FFMPeg type that we are using
@@ -71,29 +72,59 @@ class FFMpegController with ChangeNotifier {
     }
   }
 
-  Future<bool> resize({
-    required int height,
-    required int width,
+  Future<bool> execute({
+    required List<String> arguments,
+    required File inputFile,
+    required File outputFile,
   }) async {
-    throw UnimplementedError();  //TODO
-  }
-
-  Future<bool> changeQuality({
-    required int qualityLossPercentage,
-  }) async {
-    throw UnimplementedError(); //TODO
-  }
-
-  Future<bool> setFramerate({required int fps}) async {
-    throw UnimplementedError(); //TODO
-  }
-
-  Future<String> _execute(String command) async {
     switch (_ffmpegType) {
       case FFMpegType.ffmpegKit:
         throw UnimplementedError(); // TODO
       case FFMpegType.nativeBinaries:
-        return command;
+        final Process ffmpegProcess = await Process.start(
+          "ffmpeg",
+          <String>["-i", inputFile.path, ...arguments, outputFile.path],
+        );
+
+        //? FFMPEG outputs only to stderr
+
+        await ffmpegProcess.stderr.forEach(
+          (List<int> data) {
+            final String parsedData = String.fromCharCodes(data);
+            if (parsedData.contains("frame")) {
+              if (parsedData.contains("fps")) {
+                final int? currentFrame = int.tryParse(
+                  parsedData
+                      .substring(
+                        parsedData.indexOf("frame"),
+                        parsedData.indexOf("fps"),
+                      )
+                      .replaceAll(" ", "")
+                      .split("=")[1],
+                );
+                print("Progress ( Current frame: $currentFrame)");
+                //? Can be used to track progress if we know the duration
+                //? and fps of the target video..
+                // TODO
+              }
+            }
+
+            //TODO move those to a separate error detecting function 
+            //? As FFMPeg kit might return similar outputs.
+            if (parsedData.contains("already exists.")) {
+              throw "File already exists";
+            } else if (parsedData
+                .contains("Invalid data found when processing input")) {
+              throw "Corrupted file";
+            } else if (parsedData.contains("No such file or directory")) {
+              throw "Original file not found";
+            }
+          },
+        );
+
+        await outputFile.copyOriginalFileDetails(inputFile);
+        return true;
+
       case FFMpegType.staticBinaries:
         throw UnimplementedError(); // TODO
     }
