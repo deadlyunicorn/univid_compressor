@@ -1,13 +1,24 @@
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
+import "package:provider/provider.dart";
+import "package:univid_compressor/database/database.dart";
 import "package:univid_compressor/skeleton/skeleton.dart";
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final AppDatabase database = AppDatabase();
+
+  runApp(
+    MyApp(
+      database: database,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({required this.database, super.key});
+
+  final AppDatabase database;
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +68,31 @@ class MyApp extends StatelessWidget {
           color: _secondary,
           linearTrackColor: Colors.red,
         ),
+        textTheme: const TextTheme(
+          bodySmall: TextStyle(
+            fontSize: 16,
+          ),
+          bodyMedium: TextStyle(
+            fontSize: 20,
+          ),
+          bodyLarge: TextStyle(
+            fontSize: 24,
+          ),
+        ),
+        sliderTheme: SliderThemeData(
+          overlayShape: SliderComponentShape.noThumb,
+        ),
+        dropdownMenuTheme: const DropdownMenuThemeData(
+          menuStyle: MenuStyle(visualDensity: VisualDensity.compact),
+          textStyle: TextStyle(
+            fontSize: 16,
+          ),
+        ),
       ),
-      home: const Skeleton(),
+      home: Provider<AppDatabase>(
+        create: (BuildContext context) => database,
+        child: const Skeleton(),
+      ),
     );
   }
 

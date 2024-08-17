@@ -50,3 +50,4 @@ windows
 web
 .metadata
 pubspec.lock
+lib/database/database.g.dart
