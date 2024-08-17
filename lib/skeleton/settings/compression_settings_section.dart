@@ -28,7 +28,20 @@ class CompressionSettingsSection extends StatelessWidget {
                 ),
               ),
 
-            
+              // TODO: 1. When Editing settings value
+              // TODO: Add a debounced store to db
+              // TODO: So that the database keeps the last stored settings
+
+              // TODO: 2. When Selecting a preset
+              // TODO: replace the Settings with
+              // TODO: with the values stored in the preset
+
+              // TODO: 3.
+              // TODO: Add presets to videos.
+              // TODO: We can select multiple vidos
+              // TODO: and can add a preset to multiples at the same time
+              // TODO: Before each operation we check the database for its values.
+
               const PresetSelector(),
               const QualitySlider(),
             ],
