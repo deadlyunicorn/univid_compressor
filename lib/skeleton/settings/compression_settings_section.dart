@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import "package:univid_compressor/core/constants.dart";
 import "package:univid_compressor/core/widgets.dart";
+import "package:univid_compressor/skeleton/settings/preset_selector/preset_selector.dart";
+import "package:univid_compressor/skeleton/settings/quality_slider/quality_slider.dart";
 import "package:univid_compressor/skeleton/video_queue/list_container.dart";
 
 class CompressionSettingsSection extends StatelessWidget {
@@ -13,17 +15,24 @@ class CompressionSettingsSection extends StatelessWidget {
     return SizedBox(
       width: kXLScreenWidth,
       child: CustomContainer(
-        child: ColumnWithSpacings(
-          spacing: 16,
-          children: <Widget>[
-            Center(
-              child: Text(
-                "Settings",
-                style: Theme.of(context).textTheme.headlineMedium,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: ColumnWithSpacings(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 16,
+            children: <Widget>[
+              Center(
+                child: Text(
+                  "Settings",
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
               ),
-            ),
-            Text("haha"),
-          ],
+
+            
+              const PresetSelector(),
+              const QualitySlider(),
+            ],
+          ),
         ),
       ),
     );

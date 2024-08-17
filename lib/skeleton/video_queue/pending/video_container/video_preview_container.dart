@@ -115,7 +115,8 @@ class _TemporaryCoolFfmpegButtonState extends State<TemporaryCoolFfmpegButton> {
         );
 
         try {
-          final newVideo = videoEntity.changeScale(divideBy: 2);
+          final Future<VideoDetails> newVideo =
+              videoEntity.changeScale(divideBy: 2);
 
           if (context.mounted) {
             showNormalSnackbar(
