@@ -60,6 +60,7 @@ class _PresetSelectorState extends State<PresetSelector> {
           message: selectedPreset?.title ?? "",
           child: DropdownMenu<int>(
             hintText: "New Preset",
+            requestFocusOnTap: true,
             width: 192,
             controller: presetTextController,
             dropdownMenuEntries: <DropdownMenuEntry<int>>[
