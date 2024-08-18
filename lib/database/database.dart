@@ -4,10 +4,18 @@ import "package:drift_flutter/drift_flutter.dart";
 part "database.g.dart";
 
 class Presets extends Table {
-
   IntColumn get id => integer().autoIncrement()();
   TextColumn get title => text()();
+  DateTimeColumn get lastSelectedDate => dateTime()();
+}
+
+class PresetProperties extends Table {
+  IntColumn get presetId => integer().references(Presets, #id)();
   RealColumn get quality => real()();
+  DateTimeColumn get lastSelectedDate => dateTime()();
+
+  @override
+  Set<IntColumn>? get primaryKey => <IntColumn>{ presetId };
 }
 
 @DriftDatabase(tables: <Type>[Presets])
@@ -23,6 +31,6 @@ class AppDatabase extends _$AppDatabase {
   static QueryExecutor _openConnection() {
     // `driftDatabase` from `package:drift_flutter` stores the database in
     // `getApplicationDocumentsDirectory()`.
-    return driftDatabase(name: "decla_time");
+    return driftDatabase(name: "univid_database");
   }
 }
