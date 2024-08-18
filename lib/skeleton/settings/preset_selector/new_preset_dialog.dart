@@ -17,7 +17,7 @@ class _NewPresetDialogState extends State<NewPresetDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return UnividDialog<DropdownMenuEntry<int>>(
+    return UnividDialog<Preset>(
       content: TextField(
         maxLines: 4,
         minLines: 1,
@@ -25,15 +25,17 @@ class _NewPresetDialogState extends State<NewPresetDialog> {
       ),
       onConfirm: () async {
         final AppDatabase db = context.read<AppDatabase>();
+        final DateTime selectedDate = DateTime.now();
         final int rowId = await db.into(db.presets).insert(
               PresetsCompanion.insert(
                 title: presetTextController.text,
-                quality: 1,
+                lastSelectedDate: selectedDate,
               ),
             );
-        return DropdownMenuEntry<int>(
-          value: rowId,
-          label: presetTextController.text,
+        return Preset(
+          id: rowId,
+          title: presetTextController.text,
+          lastSelectedDate: selectedDate,
         );
       },
       title: const Text("Enter the name of the new Preset:"),

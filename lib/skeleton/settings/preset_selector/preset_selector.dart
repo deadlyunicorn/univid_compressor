@@ -2,6 +2,7 @@ import "dart:async";
 
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
+import "package:univid_compressor/core/stores/preset_store.dart";
 import "package:univid_compressor/core/widgets.dart";
 import "package:univid_compressor/database/database.dart";
 import "package:univid_compressor/skeleton/settings/preset_selector/new_preset_dialog.dart";
@@ -22,13 +23,29 @@ class _PresetSelectorState extends State<PresetSelector> {
   void initState() {
     super.initState();
     db.select(db.presets).get().then((List<Preset> dbPresets) {
+      final Preset? lastSelectedPreset = dbPresets.fold(
+        null,
+        (Preset? previousValue, Preset element) => previousValue == null
+            ? element
+            : previousValue.lastSelectedDate
+                        .compareTo(element.lastSelectedDate) <
+                    0
+                ? element
+                : previousValue,
+      );
+
       setState(() {
         presets = dbPresets;
+        if (lastSelectedPreset != null) {
+          setSelectedPreset(
+            lastSelectedPreset,
+          );
+        }
       });
     });
   }
 
-  DropdownMenuEntry<int>? get selectedPreset => _selectedPreset;
+  Preset? get selectedPreset => _selectedPreset;
 
   final TextEditingController presetTextController = TextEditingController();
   List<Preset> presets = <Preset>[];
@@ -40,14 +57,15 @@ class _PresetSelectorState extends State<PresetSelector> {
       children: <Widget>[
         const Text("Presets"),
         Tooltip(
-          message: selectedPreset?.label ?? "",
+          message: selectedPreset?.title ?? "",
           child: DropdownMenu<int>(
+            hintText: "New Preset",
             width: 192,
             controller: presetTextController,
             dropdownMenuEntries: <DropdownMenuEntry<int>>[
               const DropdownMenuEntry<int>(
                 value: -1,
-                label: "New Preset",
+                label: "Add new",
                 style: ButtonStyle(
                   padding: WidgetStatePropertyAll<EdgeInsets>(
                     EdgeInsets.only(left: 16),
@@ -60,7 +78,12 @@ class _PresetSelectorState extends State<PresetSelector> {
                   ),
                 ),
               ),
-              ...presets.map(
+              ...(presets
+                    ..sort(
+                      (Preset a, Preset b) =>
+                          b.lastSelectedDate.compareTo(a.lastSelectedDate),
+                    ))
+                  .map(
                 (Preset preset) => DropdownMenuEntry<int>(
                   style: const ButtonStyle(
                     padding: WidgetStatePropertyAll<EdgeInsets>(
@@ -86,7 +109,7 @@ class _PresetSelectorState extends State<PresetSelector> {
                               .then((List<Preset> dbPresets) {
                             setState(() {
                               presets = dbPresets;
-                              if (selectedPreset?.value == preset.id) {
+                              if (selectedPreset?.id == preset.id) {
                                 presetTextController.clear();
                               }
                             });
@@ -102,17 +125,17 @@ class _PresetSelectorState extends State<PresetSelector> {
                 ),
               ),
             ],
-            onSelected: (int? value) async {
-              if (value == -1) {
+            onSelected: (int? selectPresetById) async {
+              if (selectPresetById == -1) {
                 presetTextController.clear();
                 unawaited(
-                  showDialog<DropdownMenuEntry<int>?>(
+                  showDialog<Preset?>(
                     context: context,
                     builder: (BuildContext _) => Provider<AppDatabase>.value(
                       value: context.read<AppDatabase>(),
                       child: const NewPresetDialog(),
                     ),
-                  ).then((DropdownMenuEntry<int>? newPreset) async {
+                  ).then((Preset? newPreset) async {
                     if (newPreset != null) {
                       final List<Preset> dbPresets =
                           await db.select(db.presets).get();
@@ -123,15 +146,16 @@ class _PresetSelectorState extends State<PresetSelector> {
                     }
                   }),
                 );
-              } else if (value != null) {
-                setState(() {
+              } else if (selectPresetById != null) {
+                unawaited(
                   setSelectedPreset(
-                    DropdownMenuEntry<int>(
-                      value: value,
-                      label: presetTextController.text,
+                    Preset(
+                      id: selectPresetById,
+                      title: presetTextController.text,
+                      lastSelectedDate: DateTime.now(),
                     ),
-                  );
-                });
+                  ),
+                );
               }
             },
           ),
@@ -140,11 +164,14 @@ class _PresetSelectorState extends State<PresetSelector> {
     );
   }
 
-  DropdownMenuEntry<int>? _selectedPreset;
-  void setSelectedPreset(DropdownMenuEntry<int> newPreset) {
+  Preset? _selectedPreset;
+  Future<void> setSelectedPreset(Preset newPreset) async {
+    await context.read<PresetStore>().setSelectedPreset(newPreset);
+    final List<Preset> dbPresets = await db.select(db.presets).get();
     setState(() {
       _selectedPreset = newPreset;
-      presetTextController.text = newPreset.label;
+      presetTextController.text = newPreset.title;
+      presets = dbPresets;
     });
   }
 }
