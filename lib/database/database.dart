@@ -15,10 +15,12 @@ class PresetProperties extends Table {
   DateTimeColumn get lastSelectedDate => dateTime()();
 
   @override
-  Set<IntColumn>? get primaryKey => <IntColumn>{ presetId };
+  Set<Column<Object>>? get primaryKey => <IntColumn>{ presetId };
 }
 
-@DriftDatabase(tables: <Type>[Presets])
+//!
+@DriftDatabase(tables: <Type>[Presets,PresetProperties])
+
 class AppDatabase extends _$AppDatabase {
   // After generating code, this class needs to define a `schemaVersion` getter
   // and a constructor telling drift where the database should be stored.

@@ -1,20 +1,18 @@
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
+import "package:univid_compressor/core/stores/settings_store.dart";
 import "package:univid_compressor/core/widgets.dart";
 
-class QualitySlider extends StatefulWidget {
+class QualitySlider extends StatelessWidget {
   const QualitySlider({
     super.key,
   });
 
   @override
-  State<QualitySlider> createState() => _QualitySliderState();
-}
-
-class _QualitySliderState extends State<QualitySlider> {
-  double qualityValue = 1;
-
-  @override
   Widget build(BuildContext context) {
+
+    final double quality =context.watch<SettingsStore>().settings.quality;
+
     return Align(
       alignment: Alignment.centerLeft,
       child: FractionallySizedBox(
@@ -23,15 +21,17 @@ class _QualitySliderState extends State<QualitySlider> {
           spacing: 8,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text( "Quality: ${(qualityValue * 100 ).toStringAsFixed(2)} %", ),
+            Text(
+              "Quality: ${(quality * 100).toStringAsFixed(2)} %",
+            ),
             Slider(
               min: 0.2,
               activeColor: Theme.of(context).colorScheme.secondary,
-              value: qualityValue,
+              value: quality,
               onChanged: (double value) {
-                setState(() {
-                  qualityValue = value;
-                });
+                
+                context.read<SettingsStore>().setProperty(quality: value);
+
               },
             ),
           ],
