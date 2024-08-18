@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
+import "package:nested/nested.dart";
 import "package:provider/provider.dart";
+import "package:univid_compressor/core/stores/preset_store.dart";
 import "package:univid_compressor/database/database.dart";
 import "package:univid_compressor/skeleton/skeleton.dart";
 
@@ -89,8 +91,13 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: Provider<AppDatabase>(
-        create: (BuildContext context) => database,
+      home: MultiProvider(
+        providers: <SingleChildWidget>[
+          Provider<AppDatabase>(create: (BuildContext context) => database),
+          ChangeNotifierProvider<PresetStore>(
+              create: (BuildContext context) =>
+                  PresetStore( database: database),),
+        ],
         child: const Skeleton(),
       ),
     );
