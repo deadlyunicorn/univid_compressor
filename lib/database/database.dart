@@ -9,18 +9,18 @@ class Presets extends Table {
   DateTimeColumn get lastSelectedDate => dateTime()();
 }
 
+
+//? Can also be reffered to as to "Settings"
 class PresetProperties extends Table {
   IntColumn get presetId => integer().references(Presets, #id)();
-  RealColumn get quality => real()();
-  DateTimeColumn get lastSelectedDate => dateTime()();
+  RealColumn get quality => real().withDefault(const Constant<double>(1))();
 
   @override
-  Set<Column<Object>>? get primaryKey => <IntColumn>{ presetId };
+  Set<Column<Object>>? get primaryKey => <IntColumn>{presetId};
 }
 
 //!
-@DriftDatabase(tables: <Type>[Presets,PresetProperties])
-
+@DriftDatabase(tables: <Type>[Presets, PresetProperties])
 class AppDatabase extends _$AppDatabase {
   // After generating code, this class needs to define a `schemaVersion` getter
   // and a constructor telling drift where the database should be stored.

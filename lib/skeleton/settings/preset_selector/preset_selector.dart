@@ -2,6 +2,7 @@ import "dart:async";
 
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
+import "package:univid_compressor/core/business/database_services/preset_service.dart";
 import "package:univid_compressor/core/stores/preset_store.dart";
 import "package:univid_compressor/core/widgets.dart";
 import "package:univid_compressor/database/database.dart";
@@ -97,12 +98,8 @@ class _PresetSelectorState extends State<PresetSelector> {
                     message: "Remove preset: ${preset.title}",
                     child: IconButton(
                       onPressed: () {
-                        (db.delete(db.presets)
-                              ..where(
-                                ($PresetsTable dbPreset) =>
-                                    dbPreset.id.equals(preset.id),
-                              ))
-                            .go()
+                        PresetService(database: db)
+                            .delete(presetToDelete: preset)
                             .then((_) {
                           db
                               .select(db.presets)
@@ -175,4 +172,6 @@ class _PresetSelectorState extends State<PresetSelector> {
       presets = dbPresets;
     });
   }
+
+  void deletePreset(Preset presetToDelete) {}
 }

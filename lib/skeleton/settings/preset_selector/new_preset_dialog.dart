@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
+import "package:univid_compressor/core/business/database_services/preset_service.dart";
 import "package:univid_compressor/core/widgets/univid_dialog.dart";
 import "package:univid_compressor/database/database.dart";
 
@@ -24,14 +25,14 @@ class _NewPresetDialogState extends State<NewPresetDialog> {
         controller: presetTextController,
       ),
       onConfirm: () async {
-        final AppDatabase db = context.read<AppDatabase>();
         final DateTime selectedDate = DateTime.now();
-        final int rowId = await db.into(db.presets).insert(
-              PresetsCompanion.insert(
-                title: presetTextController.text,
-                lastSelectedDate: selectedDate,
-              ),
-            );
+        final AppDatabase db = context.read<AppDatabase>();
+        final int rowId = await PresetService(database: db).create(
+          PresetsCompanion.insert(
+            title: presetTextController.text,
+            lastSelectedDate: selectedDate,
+          ),
+        );
         return Preset(
           id: rowId,
           title: presetTextController.text,
