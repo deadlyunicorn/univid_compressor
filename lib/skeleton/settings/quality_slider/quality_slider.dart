@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
-import "package:univid_compressor/core/stores/settings_store.dart";
+import "package:univid_compressor/core/stores/preset_store.dart";
 import "package:univid_compressor/core/widgets.dart";
 
 class QualitySlider extends StatelessWidget {
@@ -10,8 +10,7 @@ class QualitySlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final double quality =context.watch<SettingsStore>().settings.quality;
+    final double quality = context.watch<PresetStore>().settings.quality;
 
     return Align(
       alignment: Alignment.centerLeft,
@@ -29,9 +28,7 @@ class QualitySlider extends StatelessWidget {
               activeColor: Theme.of(context).colorScheme.secondary,
               value: quality,
               onChanged: (double value) {
-                
-                context.read<SettingsStore>().setProperty(quality: value);
-
+                context.read<PresetStore>().setSettings(quality: value);
               },
             ),
           ],

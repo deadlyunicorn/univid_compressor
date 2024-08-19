@@ -3,7 +3,6 @@ import "package:provider/provider.dart";
 import "package:univid_compressor/core/business/ffmpeg_helper.dart";
 import "package:univid_compressor/core/constants.dart";
 import "package:univid_compressor/core/stores/preset_store.dart";
-import "package:univid_compressor/core/stores/settings_store.dart";
 import "package:univid_compressor/database/database.dart";
 import "package:univid_compressor/skeleton/main_app.dart";
 import "package:univid_compressor/skeleton/setup/setup_ffmpeg.dart";
@@ -36,10 +35,6 @@ class Skeleton extends StatelessWidget {
                             ChangeNotifierProvider<PresetStore>(
                               create: (BuildContext context) =>
                                   PresetStore(database: database),
-                            ),
-                             ChangeNotifierProvider<SettingsStore>(
-                              create: (BuildContext context) =>
-                                  SettingsStore(database: database),
                             ),
                           ],
                           child: const MainApp(),
