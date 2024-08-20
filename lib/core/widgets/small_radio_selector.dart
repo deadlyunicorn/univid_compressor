@@ -30,7 +30,12 @@ class SmallRadioSelector<T> extends StatelessWidget {
                 groupValue: selectedValue,
                 onChanged: onChanged,
               ),
-              Text(entry.key),
+              GestureDetector(
+                onTap: () {
+                  onChanged(entry.value);
+                },
+                child: Text(entry.key),
+              ),
             ],
           ),
         ),
