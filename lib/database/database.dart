@@ -9,11 +9,14 @@ class Presets extends Table {
   DateTimeColumn get lastSelectedDate => dateTime()();
 }
 
-
 //? Can also be reffered to as to "Settings"
 class PresetProperties extends Table {
   IntColumn get presetId => integer().references(Presets, #id)();
-  RealColumn get quality => real().withDefault(const Constant<double>(1))();
+  RealColumn get quality => real().withDefault(const Constant<double>(0.8))();
+  RealColumn get scaleFactor =>
+      real().withDefault(const Constant<double>(-1))();
+  IntColumn get maxFramerate =>
+      integer().withDefault(const Constant<int>(30))();
 
   @override
   Set<Column<Object>>? get primaryKey => <IntColumn>{presetId};

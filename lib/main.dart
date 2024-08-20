@@ -87,6 +87,9 @@ class MyApp extends StatelessWidget {
             fontSize: 16,
           ),
         ),
+        radioTheme: const RadioThemeData(
+          fillColor: WidgetStatePropertyAll<Color>(_secondary),
+        ),
       ),
       home: Skeleton(
         database: database,
