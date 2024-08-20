@@ -42,6 +42,8 @@ class PresetStore extends ChangeNotifier {
   PresetProperty settings = const PresetProperty(
     presetId: -1,
     quality: 1,
+    maxFramerate: -1,
+    scaleFactor: -1,
   );
 
   /// Returns true if settings were successfully updated.
@@ -73,12 +75,16 @@ class PresetStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSettings({double? quality}) {
-    //TODO: ETC, fill in the rest properties.
-
+  void setSettings({
+    double? quality,
+    int? maxFramerate,
+    double? scaleFactor,
+  }) {
     settings = PresetProperty(
       presetId: settings.presetId,
       quality: quality ?? settings.quality,
+      scaleFactor: scaleFactor ?? settings.scaleFactor,
+      maxFramerate: maxFramerate ?? settings.maxFramerate,
     );
     notifyListeners();
     saveSettings();
