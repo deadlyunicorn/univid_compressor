@@ -1,10 +1,13 @@
 import "package:desktop_drop/desktop_drop.dart";
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 import "package:univid_compressor/core/errors/exceptions.dart";
+import "package:univid_compressor/core/stores/preset_store.dart";
 import "package:univid_compressor/core/video_details.dart";
 import "package:univid_compressor/core/widgets/snackbars.dart";
 import "package:univid_compressor/skeleton/video_queue/list_container.dart";
 import "package:univid_compressor/skeleton/video_queue/pending/import_videos_from_file_picker.dart";
+import "package:univid_compressor/skeleton/video_queue/pending/queued_video.dart";
 import "package:univid_compressor/skeleton/video_queue/pending/video_container/video_preview_container.dart";
 
 class VideoQueueList extends StatefulWidget {
@@ -17,7 +20,7 @@ class VideoQueueList extends StatefulWidget {
 }
 
 class _VideoQueueListState extends State<VideoQueueList> {
-  List<VideoDetails> videoList = <VideoDetails>[];
+  List<QueuedVideo> videoList = <QueuedVideo>[];
 
   //TODO show error indicators when file was moved/deleted/not found
 
@@ -25,25 +28,36 @@ class _VideoQueueListState extends State<VideoQueueList> {
   Widget build(BuildContext context) {
     return DropTarget(
       onDragDone: (DropDoneDetails details) async {
-        final List<VideoDetails> videos =
-            await VideoImport.importVideoDetailsListFromDesktopDrop(details);
+        final Iterable<QueuedVideo> videos =
+            (await VideoImport.importVideoDetailsListFromDesktopDrop(details))
+                .map(
+          (VideoDetails videoDetails) =>
+              QueuedVideo(videoDetails: videoDetails),
+        );
 
-        addVideos(videos);
+        addVideos(
+          videos,
+        );
       },
       child: Stack(
+        alignment: Alignment.center,
         children: <Widget>[
+          const Positioned(
+            top: 0,
+            child: Text("TODO, Select all if 1 selected button or dismiss"),
+          ),
           ListContainer(
             child: videoList.isEmpty
                 ? const Center(child: Text("No videos imported"))
                 : ListView.builder(
                     itemBuilder: (BuildContext context, int index) {
                       return VideoPreviewContainer(
-                        removeSelf: () {
+                        queuedVideo: videoList[index],
+                        updateVideo: (QueuedVideo queuedVideo) {
                           setState(() {
-                            videoList.removeAt(index);
+                            videoList[index] = queuedVideo;
                           });
                         },
-                        videoDetails: videoList[index],
                       );
                     },
                     itemCount: videoList.length,
@@ -61,21 +75,22 @@ class _VideoQueueListState extends State<VideoQueueList> {
               ),
             ),
           ),
+       
         ],
       ),
     );
   }
 
   ///Returns new videos that should have been added.
-  int addVideos(Iterable<VideoDetails> candidateVideos) {
+  int addVideos(Iterable<QueuedVideo> candidateVideos) {
     final Iterable<String> alreadyImportedVideoFileUrls = videoList.map(
-      (VideoDetails alreadyImportedVideo) =>
-          alreadyImportedVideo.fileReference.path,
+      (QueuedVideo alreadyImportedVideo) =>
+          alreadyImportedVideo.videoDetails.fileReference.path,
     );
 
-    final Iterable<VideoDetails> newVideos = candidateVideos.where(
-      (VideoDetails candidateVideo) => !alreadyImportedVideoFileUrls
-          .contains(candidateVideo.fileReference.path),
+    final Iterable<QueuedVideo> newVideos = candidateVideos.where(
+      (QueuedVideo candidateVideo) => !alreadyImportedVideoFileUrls
+          .contains(candidateVideo.videoDetails.fileReference.path),
     );
 
     final int videosToBeAddedLength = newVideos.length;
@@ -89,10 +104,15 @@ class _VideoQueueListState extends State<VideoQueueList> {
 
   Future<void> importVideos() async {
     try {
-      final List<VideoDetails> videos =
-          await VideoImport.importVideoDetailsListFromFilePicker();
+      final Iterable<QueuedVideo> videos =
+          ( await VideoImport.importVideoDetailsListFromFilePicker()).map(
+          (VideoDetails videoDetails) =>
+              QueuedVideo(videoDetails: videoDetails),
+        );
 
-      addVideos(videos);
+      addVideos(
+        videos,
+      );
     } on NoFilesFoundExcepetion {
       if (mounted) {
         showErrorSnackbar(

@@ -4,18 +4,20 @@ import "package:univid_compressor/core/business/ffmpeg_entity.dart";
 import "package:univid_compressor/core/business/ffmpeg_helper.dart";
 import "package:univid_compressor/core/video_details.dart";
 import "package:univid_compressor/core/widgets.dart";
+import "package:univid_compressor/core/widgets/custom_checkbox.dart";
 import "package:univid_compressor/core/widgets/snackbars.dart";
+import "package:univid_compressor/skeleton/video_queue/pending/queued_video.dart";
 import "package:univid_compressor/skeleton/video_queue/pending/video_container/thumbnail.dart";
 
 class VideoPreviewContainer extends StatelessWidget {
   const VideoPreviewContainer({
-    required this.videoDetails,
-    required this.removeSelf,
+    required this.queuedVideo,
+    required this.updateVideo,
     super.key,
   });
 
-  final VideoDetails videoDetails;
-  final void Function() removeSelf;
+  final QueuedVideo queuedVideo;
+  final void Function(QueuedVideo queuedVideo) updateVideo;
 
   @override
   Widget build(BuildContext context) {
@@ -34,29 +36,33 @@ class VideoPreviewContainer extends StatelessWidget {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
-                child: Thumbnail(videoDetails: videoDetails),
+                child: Thumbnail(videoDetails: queuedVideo.videoDetails),
               ),
               Tooltip(
-                message: videoDetails.name,
-                child: Text(videoDetails.fileNameShort),
+                message: queuedVideo.videoDetails.name,
+                child: Text(queuedVideo.videoDetails.fileNameShort),
               ),
               Align(
                 alignment: Alignment.bottomRight,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    IconButton(
-                      color: Theme.of(context).colorScheme.error,
-                      onPressed: () {
-                        removeSelf();
+                    CustomCheckbox( //TODO Looks misaligned..
+                      isChecked: queuedVideo.isSelected,
+                      onChanged: (bool? isSelected) {
+                        updateVideo(
+                          queuedVideo..isSelected = isSelected == true,
+                        );
                       },
-                      icon: const Icon(Icons.delete),
                     ),
+                    //TODO: display preset.
+          Text(queuedVideo.preset?.title ?? "No preset found" ),
                     RowWithSpacings(
                       spacing: 4,
                       children: <Widget>[
                         TemporaryCoolFfmpegButton(
-                          videoDetails: videoDetails,
+                          videoDetails: queuedVideo.videoDetails,
                         ),
                         Tooltip(
                           textAlign: TextAlign.center,
@@ -68,7 +74,7 @@ class VideoPreviewContainer extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          videoDetails.sizeString,
+                          queuedVideo.videoDetails.sizeString,
                         ),
                       ],
                     ),

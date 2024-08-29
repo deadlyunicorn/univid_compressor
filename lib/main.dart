@@ -42,6 +42,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textButtonTheme: TextButtonThemeData(
           style: ButtonStyle(
+            foregroundColor: const WidgetStatePropertyAll<Color>(_secondary),
             shape: WidgetStatePropertyAll<OutlinedBorder>(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
