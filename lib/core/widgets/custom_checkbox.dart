@@ -3,10 +3,12 @@ import "package:flutter/material.dart";
 class CustomCheckbox extends StatelessWidget {
   final void Function(bool newValue) onChanged;
   final bool isChecked;
+  final double size;
 
   const CustomCheckbox({
     required this.onChanged,
     required this.isChecked,
+    this.size = 16,
     super.key,
   });
 
@@ -20,8 +22,8 @@ class CustomCheckbox extends StatelessWidget {
         onChanged(!isChecked);
       },
       child: AnimatedContainer(
-        width: 16,
-        height: 16,
+        width: size,
+        height: size,
         decoration: BoxDecoration(
           border: Border.all(
             color: Theme.of(context).colorScheme.secondary,
