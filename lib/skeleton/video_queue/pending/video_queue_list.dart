@@ -75,7 +75,61 @@ class _VideoQueueListState extends State<VideoQueueList> {
               ),
             ),
           ),
-       
+          if (videoList
+              .where(
+                (QueuedVideo element) => element.isSelected,
+              )
+              .isNotEmpty)
+            Positioned(
+              bottom: 0,
+              child: Row(
+                children: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      final List<QueuedVideo> newVideoList = videoList
+                          .where(
+                            (QueuedVideo element) => !element.isSelected,
+                          )
+                          .toList();
+                      setState(() {
+                        videoList = newVideoList;
+                      });
+                    },
+                    child: const Text("Remove selected"),
+                  ),
+                  if (context.watch<PresetStore>().selectedPreset != null)
+                    SizedBox(
+                      width: 200,
+                      child: Center(
+                        child: TextButton(
+                          onPressed: () {
+                            final List<QueuedVideo> newVideoList = videoList
+                                .map(
+                                  (QueuedVideo video) => video.isSelected
+                                      ? (video
+                                        ..preset = context
+                                            .read<PresetStore>()
+                                            .selectedPreset
+                                        ..isSelected = false)
+                                      : video,
+                                )
+                                .toList();
+                            setState(() {
+                              videoList = newVideoList;
+                            });
+                          },
+                          child: Text(
+                            // ignore: lines_longer_than_80_chars
+                            "Apply preset: `${context.watch<PresetStore>().selectedPreset!.title}`",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
         ],
       ),
     );
@@ -105,10 +159,9 @@ class _VideoQueueListState extends State<VideoQueueList> {
   Future<void> importVideos() async {
     try {
       final Iterable<QueuedVideo> videos =
-          ( await VideoImport.importVideoDetailsListFromFilePicker()).map(
-          (VideoDetails videoDetails) =>
-              QueuedVideo(videoDetails: videoDetails),
-        );
+          (await VideoImport.importVideoDetailsListFromFilePicker()).map(
+        (VideoDetails videoDetails) => QueuedVideo(videoDetails: videoDetails),
+      );
 
       addVideos(
         videos,
