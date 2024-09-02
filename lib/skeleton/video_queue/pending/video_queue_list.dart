@@ -4,7 +4,10 @@ import "package:provider/provider.dart";
 import "package:univid_compressor/core/errors/exceptions.dart";
 import "package:univid_compressor/core/stores/preset_store.dart";
 import "package:univid_compressor/core/video_details.dart";
+import "package:univid_compressor/core/widgets.dart";
+import "package:univid_compressor/core/widgets/animated_appearance.dart";
 import "package:univid_compressor/core/widgets/custom_scrollable_list.dart";
+import "package:univid_compressor/core/widgets/error_button.dart";
 import "package:univid_compressor/core/widgets/snackbars.dart";
 import "package:univid_compressor/skeleton/video_queue/list_container.dart";
 import "package:univid_compressor/skeleton/video_queue/pending/import_videos_from_file_picker.dart";
@@ -21,12 +24,16 @@ class VideoQueueList extends StatefulWidget {
 }
 
 class _VideoQueueListState extends State<VideoQueueList> {
-  List<QueuedVideo> videoList = <QueuedVideo>[];
+  List<QueuedVideo> queuedVideoList = <QueuedVideo>[];
 
   //TODO show error indicators when file was moved/deleted/not found
 
   @override
   Widget build(BuildContext context) {
+    final Iterable<QueuedVideo> selectedVideos = queuedVideoList.where(
+      (QueuedVideo element) => element.isSelected,
+    );
+
     return DropTarget(
       onDragDone: (DropDoneDetails details) async {
         final Iterable<QueuedVideo> videos =
@@ -43,15 +50,47 @@ class _VideoQueueListState extends State<VideoQueueList> {
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
-          const Positioned(
+          Positioned(
             top: 0,
-            child: Text("TODO, Select all if 1 selected button or dismiss"),
+            left: 0,
+            child: AnimatedAppearance(
+              visibleIf: selectedVideos.isNotEmpty,
+              child: RowWithSpacings(
+                spacing: 8,
+                children: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      final List<QueuedVideo> newVideoList = queuedVideoList
+                          .map((QueuedVideo video) => video..isSelected = true)
+                          .toList();
+
+                      setState(() {
+                        queuedVideoList = newVideoList;
+                      });
+                    },
+                    child: const Text("Select all"),
+                  ),
+                  ErrorButton(
+                    onPressed: () {
+                      final List<QueuedVideo> newVideoList = queuedVideoList
+                          .map((QueuedVideo video) => video..isSelected = false)
+                          .toList();
+
+                      setState(() {
+                        queuedVideoList = newVideoList;
+                      });
+                    },
+                    child: const Text("Unselect all"),
+                  ),
+                ],
+              ),
+            ),
           ),
           ListContainer(
-            child: videoList.isEmpty
+            child: queuedVideoList.isEmpty
                 ? const Center(child: Text("No videos imported"))
                 : CustomScrollableList<QueuedVideo>(
-                    items: videoList,
+                    items: queuedVideoList,
                     builder: ({
                       required int index,
                       required QueuedVideo item,
@@ -60,7 +99,7 @@ class _VideoQueueListState extends State<VideoQueueList> {
                       queuedVideo: item,
                       updateVideo: (QueuedVideo queuedVideo) {
                         setState(() {
-                          videoList[index] = item;
+                          queuedVideoList[index] = item;
                         });
                       },
                     ),
@@ -78,24 +117,21 @@ class _VideoQueueListState extends State<VideoQueueList> {
               ),
             ),
           ),
-          if (videoList
-              .where(
-                (QueuedVideo element) => element.isSelected,
-              )
-              .isNotEmpty)
-            Positioned(
-              bottom: 0,
+          Positioned(
+            bottom: 0,
+            child: AnimatedAppearance(
+              visibleIf: selectedVideos.isNotEmpty,
               child: Row(
                 children: <Widget>[
                   TextButton(
                     onPressed: () {
-                      final List<QueuedVideo> newVideoList = videoList
+                      final List<QueuedVideo> newVideoList = queuedVideoList
                           .where(
                             (QueuedVideo element) => !element.isSelected,
                           )
                           .toList();
                       setState(() {
-                        videoList = newVideoList;
+                        queuedVideoList = newVideoList;
                       });
                     },
                     child: const Text("Remove selected"),
@@ -106,19 +142,20 @@ class _VideoQueueListState extends State<VideoQueueList> {
                       child: Center(
                         child: TextButton(
                           onPressed: () {
-                            final List<QueuedVideo> newVideoList = videoList
-                                .map(
-                                  (QueuedVideo video) => video.isSelected
-                                      ? (video
-                                        ..preset = context
-                                            .read<PresetStore>()
-                                            .selectedPreset
-                                        ..isSelected = false)
-                                      : video,
-                                )
-                                .toList();
+                            final List<QueuedVideo> newVideoList =
+                                queuedVideoList
+                                    .map(
+                                      (QueuedVideo video) => video.isSelected
+                                          ? (video
+                                            ..preset = context
+                                                .read<PresetStore>()
+                                                .selectedPreset
+                                            ..isSelected = false)
+                                          : video,
+                                    )
+                                    .toList();
                             setState(() {
-                              videoList = newVideoList;
+                              queuedVideoList = newVideoList;
                             });
                           },
                           child: Text(
@@ -133,6 +170,7 @@ class _VideoQueueListState extends State<VideoQueueList> {
                 ],
               ),
             ),
+          ),
         ],
       ),
     );
@@ -140,7 +178,7 @@ class _VideoQueueListState extends State<VideoQueueList> {
 
   ///Returns new videos that should have been added.
   int addVideos(Iterable<QueuedVideo> candidateVideos) {
-    final Iterable<String> alreadyImportedVideoFileUrls = videoList.map(
+    final Iterable<String> alreadyImportedVideoFileUrls = queuedVideoList.map(
       (QueuedVideo alreadyImportedVideo) =>
           alreadyImportedVideo.videoDetails.fileReference.path,
     );
@@ -153,7 +191,7 @@ class _VideoQueueListState extends State<VideoQueueList> {
     final int videosToBeAddedLength = newVideos.length;
 
     setState(() {
-      videoList.addAll(newVideos);
+      queuedVideoList.addAll(newVideos);
     });
 
     return videosToBeAddedLength;
