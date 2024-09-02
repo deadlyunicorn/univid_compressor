@@ -1,3 +1,5 @@
+import "dart:math";
+
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:univid_compressor/database/database.dart";
@@ -42,6 +44,16 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textButtonTheme: TextButtonThemeData(
           style: ButtonStyle(
+            overlayColor: WidgetStateProperty.resolveWith(
+              (Set<WidgetState> states) {
+                if (states.contains(WidgetState.hovered)) {
+                  return _secondary.withAlpha(pow(2, 4).toInt());
+                } else if (states.contains(WidgetState.pressed)) {
+                  return _secondary.withAlpha(pow(2, 5).toInt());
+                }
+                return Colors.transparent;
+              },
+            ),
             foregroundColor: const WidgetStatePropertyAll<Color>(_secondary),
             shape: WidgetStatePropertyAll<OutlinedBorder>(
               RoundedRectangleBorder(
