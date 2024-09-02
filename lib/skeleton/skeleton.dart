@@ -66,7 +66,7 @@ class AppScrollView extends StatelessWidget {
         builder: (
           BuildContext context,
           AppRootScrollPhysicsNotifier notifier,
-          Widget? child,
+          Widget? _,
         ) {
           return SingleChildScrollView(
             physics: notifier.rootScrollPhysics,
