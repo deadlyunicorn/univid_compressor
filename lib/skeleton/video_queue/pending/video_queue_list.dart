@@ -4,6 +4,7 @@ import "package:provider/provider.dart";
 import "package:univid_compressor/core/errors/exceptions.dart";
 import "package:univid_compressor/core/stores/preset_store.dart";
 import "package:univid_compressor/core/video_details.dart";
+import "package:univid_compressor/core/widgets/custom_scrollable_list.dart";
 import "package:univid_compressor/core/widgets/snackbars.dart";
 import "package:univid_compressor/skeleton/video_queue/list_container.dart";
 import "package:univid_compressor/skeleton/video_queue/pending/import_videos_from_file_picker.dart";
@@ -49,18 +50,20 @@ class _VideoQueueListState extends State<VideoQueueList> {
           ListContainer(
             child: videoList.isEmpty
                 ? const Center(child: Text("No videos imported"))
-                : ListView.builder(
-                    itemBuilder: (BuildContext context, int index) {
-                      return VideoPreviewContainer(
-                        queuedVideo: videoList[index],
-                        updateVideo: (QueuedVideo queuedVideo) {
-                          setState(() {
-                            videoList[index] = queuedVideo;
-                          });
-                        },
-                      );
-                    },
-                    itemCount: videoList.length,
+                : CustomScrollableList<QueuedVideo>(
+                    items: videoList,
+                    builder: ({
+                      required int index,
+                      required QueuedVideo item,
+                    }) =>
+                        VideoPreviewContainer(
+                      queuedVideo: item,
+                      updateVideo: (QueuedVideo queuedVideo) {
+                        setState(() {
+                          videoList[index] = item;
+                        });
+                      },
+                    ),
                   ),
           ),
           Positioned(
