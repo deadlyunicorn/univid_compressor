@@ -15,7 +15,7 @@ class Skeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: AppScrollView(
         child: Center(
           child: SizedBox(
             width: k3XLScreenWidth,
@@ -47,5 +47,48 @@ class Skeleton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class AppScrollView extends StatelessWidget {
+  const AppScrollView({
+    required this.child,
+    super.key,
+  });
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<AppRootScrollPhysicsNotifier>(
+      create: (BuildContext _) => AppRootScrollPhysicsNotifier(),
+      child: Consumer<AppRootScrollPhysicsNotifier>(
+        builder: (
+          BuildContext context,
+          AppRootScrollPhysicsNotifier notifier,
+          Widget? child,
+        ) {
+          return SingleChildScrollView(
+            physics: notifier.rootScrollPhysics,
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+}
+
+class AppRootScrollPhysicsNotifier extends ChangeNotifier {
+  ScrollPhysics _rootScrollPhysics = const ClampingScrollPhysics();
+  ScrollPhysics get rootScrollPhysics => _rootScrollPhysics;
+
+  void disableRootScrollPhysics() {
+    _rootScrollPhysics = const NeverScrollableScrollPhysics();
+    notifyListeners();
+  }
+
+  void enableRootScrollPhysics() {
+    _rootScrollPhysics = const ClampingScrollPhysics();
+    notifyListeners();
   }
 }

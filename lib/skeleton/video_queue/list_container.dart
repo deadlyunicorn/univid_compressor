@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:univid_compressor/core/constants.dart";
+import "package:univid_compressor/core/widgets/custom_container.dart";
 
 class ListContainer extends StatelessWidget {
   const ListContainer({
@@ -20,29 +21,6 @@ class ListContainer extends StatelessWidget {
         ///? Leave space for Stack() overlaying eleents
         padding: const EdgeInsets.all(32.0),
         child: CustomContainer(child: child),
-      ),
-    );
-  }
-}
-
-class CustomContainer extends StatelessWidget {
-  const CustomContainer({
-    required this.child,
-    super.key,
-  });
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
-        child: child,
       ),
     );
   }

@@ -1,11 +1,11 @@
 import "package:flutter/material.dart";
 import "package:univid_compressor/core/constants.dart";
 import "package:univid_compressor/core/widgets.dart";
+import "package:univid_compressor/core/widgets/custom_container.dart";
 import "package:univid_compressor/skeleton/settings/max_framerate_radio/max_framerate_radio.dart";
 import "package:univid_compressor/skeleton/settings/preset_selector/preset_selector.dart";
 import "package:univid_compressor/skeleton/settings/quality_slider/quality_slider.dart";
 import "package:univid_compressor/skeleton/settings/scale_factor_selector/scale_factor_selector.dart";
-import "package:univid_compressor/skeleton/video_queue/list_container.dart";
 
 class CompressionSettingsSection extends StatelessWidget {
   const CompressionSettingsSection({
