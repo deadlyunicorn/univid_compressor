@@ -11,26 +11,19 @@ class StartConvertingSelectedButton extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: Theme.of(context).colorScheme.secondary,
+        TextButton(
+          onPressed: () async {//TODO HERE
+            showNormalSnackbar(context: context, message: "helloWorld!");
+          },
+          child: const Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.0),
+            child: Column(
+              children: <Widget>[
+                Text("Start Converting"),
+                Icon(
+                  Icons.keyboard_double_arrow_right_rounded,
                 ),
-          ),
-          child: TextButton(
-            onPressed: () async {//TODO HERE
-              showNormalSnackbar(context: context, message: "helloWorld!");
-            },
-            child: const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-              child: Column(
-                children: <Widget>[
-                  Text("Start Converting"),
-                  Icon(
-                    Icons.keyboard_double_arrow_right_rounded,
-                  ),
-                ],
-              ),
+              ],
             ),
           ),
         ),
