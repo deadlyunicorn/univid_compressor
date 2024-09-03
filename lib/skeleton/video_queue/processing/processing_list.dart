@@ -1,8 +1,8 @@
 import "package:flutter/material.dart";
 import "package:univid_compressor/skeleton/video_queue/list_container.dart";
 
-class CompletedProcessingList extends StatelessWidget {
-  const CompletedProcessingList({
+class ProcessingList extends StatelessWidget {
+  const ProcessingList({
     super.key,
   });
 
@@ -13,7 +13,7 @@ class CompletedProcessingList extends StatelessWidget {
     return ListContainer(
       //TODO HERE
       child: isEmpty
-          ? const Center(child: Text("No videos converted"))
+          ? const Center(child: Text("No videos to convert"))
           : const Column(),
     );
   }

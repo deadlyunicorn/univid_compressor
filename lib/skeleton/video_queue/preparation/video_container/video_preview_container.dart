@@ -6,18 +6,18 @@ import "package:univid_compressor/core/video_details.dart";
 import "package:univid_compressor/core/widgets.dart";
 import "package:univid_compressor/core/widgets/custom_checkbox.dart";
 import "package:univid_compressor/core/widgets/snackbars.dart";
-import "package:univid_compressor/skeleton/video_queue/pending/queued_video.dart";
-import "package:univid_compressor/skeleton/video_queue/pending/video_container/thumbnail.dart";
+import "package:univid_compressor/skeleton/video_queue/preparation/preparation_video.dart";
+import "package:univid_compressor/skeleton/video_queue/preparation/video_container/thumbnail.dart";
 
 class VideoPreviewContainer extends StatelessWidget {
   const VideoPreviewContainer({
-    required this.queuedVideo,
+    required this.preparationVideo,
     required this.updateVideo,
     super.key,
   });
 
-  final QueuedVideo queuedVideo;
-  final void Function(QueuedVideo queuedVideo) updateVideo;
+  final PreparationVideo preparationVideo;
+  final void Function(PreparationVideo preparation) updateVideo;
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +36,11 @@ class VideoPreviewContainer extends StatelessWidget {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
-                child: Thumbnail(videoDetails: queuedVideo.videoDetails),
+                child: Thumbnail(videoDetails: preparationVideo.videoDetails),
               ),
               Tooltip(
-                message: queuedVideo.videoDetails.name,
-                child: Text(queuedVideo.videoDetails.fileNameShort),
+                message: preparationVideo.videoDetails.name,
+                child: Text(preparationVideo.videoDetails.fileNameShort),
               ),
               Align(
                 alignment: Alignment.bottomRight,
@@ -48,33 +48,36 @@ class VideoPreviewContainer extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    CustomCheckbox( //TODO Looks misaligned..
-                      isChecked: queuedVideo.isSelected,
+                    CustomCheckbox(
+                      //TODO Looks misaligned..
+                      isChecked: preparationVideo.isSelected,
                       onChanged: (bool? isSelected) {
                         updateVideo(
-                          queuedVideo..isSelected = isSelected == true,
+                          preparationVideo..isSelected = isSelected == true,
                         );
                       },
                     ),
-                    //TODO: display preset.
-          Text(queuedVideo.preset?.title ?? "No preset found" ),
                     RowWithSpacings(
                       spacing: 4,
                       children: <Widget>[
                         TemporaryCoolFfmpegButton(
-                          videoDetails: queuedVideo.videoDetails,
+                          videoDetails: preparationVideo.videoDetails,
                         ),
                         Tooltip(
                           textAlign: TextAlign.center,
                           message:
-                              "hello world", //TODO Display video details here
+                              "Selected Preset: ${preparationVideo.preset?.title ?? "No preset found"}${preparationVideo.preset != null ? "" : ""}", //TODO Display video details here
                           child: Icon(
-                            color: Theme.of(context).colorScheme.secondary,
-                            Icons.info,
+                            color: preparationVideo.preset != null
+                                ? Theme.of(context).colorScheme.secondary
+                                : Theme.of(context).colorScheme.error,
+                            preparationVideo.preset != null
+                                ? Icons.domain_verification_rounded
+                                : Icons.pending_actions_rounded,
                           ),
                         ),
                         Text(
-                          queuedVideo.videoDetails.sizeString,
+                          preparationVideo.videoDetails.sizeString,
                         ),
                       ],
                     ),

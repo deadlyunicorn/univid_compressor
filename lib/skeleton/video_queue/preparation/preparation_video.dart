@@ -1,8 +1,8 @@
 import "package:univid_compressor/core/video_details.dart";
 import "package:univid_compressor/database/database.dart";
 
-class QueuedVideo {
-  QueuedVideo({required this.videoDetails});
+class PreparationVideo {
+  PreparationVideo({required this.videoDetails});
 
   VideoDetails videoDetails;
 
