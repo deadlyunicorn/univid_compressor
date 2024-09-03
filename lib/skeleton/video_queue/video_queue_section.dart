@@ -9,8 +9,8 @@ import "package:univid_compressor/skeleton/video_queue/preparation/video_prepara
 import "package:univid_compressor/skeleton/video_queue/processing/processing_list.dart";
 import "package:univid_compressor/skeleton/video_queue/start_converting_selected_button.dart";
 
-class VideoPreparationSection extends StatelessWidget {
-  const VideoPreparationSection({
+class VideoQueueSection extends StatelessWidget {
+  const VideoQueueSection({
     super.key,
   });
 
@@ -19,9 +19,12 @@ class VideoPreparationSection extends StatelessWidget {
     return ChangeNotifierProvider<PreparationVideosStore>(
       create: (BuildContext context) => PreparationVideosStore(),
       child: Consumer<PreparationVideosStore>(
-        builder:
-            (BuildContext context, PreparationVideosStore notifier, Widget? child) =>
-                SizedBox(
+        builder: (
+          BuildContext context,
+          PreparationVideosStore notifier,
+          Widget? child,
+        ) =>
+            SizedBox(
           height:
               max(MediaQuery.sizeOf(context).height * 0.7, kMediumScreenWidth),
           child: RowWithSpacings(
