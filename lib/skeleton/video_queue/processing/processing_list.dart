@@ -1,4 +1,7 @@
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
+import "package:univid_compressor/core/stores/processing_videos_store.dart";
+import "package:univid_compressor/core/stores/types/processing_video.dart";
 import "package:univid_compressor/skeleton/video_queue/list_container.dart";
 
 class ProcessingList extends StatelessWidget {
@@ -9,12 +12,15 @@ class ProcessingList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isEmpty = true;
-
+    final List<ProcessingVideo> processingVideoList =
+        context.watch<ProcessingVideosStore>().processingVideoList;
     return ListContainer(
       //TODO HERE
-      child: isEmpty
+      child: processingVideoList.isEmpty
           ? const Center(child: Text("No videos to convert"))
-          : const Column(),
+          : Column(
+              children: <Widget>[Text("${processingVideoList.length} videos")],
+            ),
     );
   }
 }

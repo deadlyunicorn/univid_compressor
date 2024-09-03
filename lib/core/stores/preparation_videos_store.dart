@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
+import "package:univid_compressor/core/stores/types/preparation_video.dart";
 import "package:univid_compressor/database/database.dart";
-import "package:univid_compressor/skeleton/video_queue/preparation/preparation_video.dart";
 
 class PreparationVideosStore extends ChangeNotifier {
   List<PreparationVideo> _preparationVideoList = <PreparationVideo>[];
@@ -76,5 +76,15 @@ class PreparationVideosStore extends ChangeNotifier {
   }) {
     _preparationVideoList[index] = newPreparationVideo;
     notifyListeners();
+  }
+
+  Iterable<PreparationVideo> moveWherePresetExists() {
+    final Iterable<PreparationVideo> videosToMove = preparationVideoList
+        .where((PreparationVideo video) => video.preset != null);
+    _preparationVideoList = preparationVideoList
+        .where((PreparationVideo video) => video.preset == null)
+        .toList();
+    notifyListeners();
+    return videosToMove;
   }
 }
