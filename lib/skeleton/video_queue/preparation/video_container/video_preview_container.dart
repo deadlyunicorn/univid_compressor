@@ -2,11 +2,11 @@ import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import "package:univid_compressor/core/business/ffmpeg_entity.dart";
 import "package:univid_compressor/core/business/ffmpeg_helper.dart";
+import "package:univid_compressor/core/stores/types/preparation_video.dart";
 import "package:univid_compressor/core/video_details.dart";
 import "package:univid_compressor/core/widgets.dart";
 import "package:univid_compressor/core/widgets/custom_checkbox.dart";
 import "package:univid_compressor/core/widgets/snackbars.dart";
-import "package:univid_compressor/skeleton/video_queue/preparation/preparation_video.dart";
 import "package:univid_compressor/skeleton/video_queue/preparation/video_container/thumbnail.dart";
 
 class VideoPreviewContainer extends StatelessWidget {

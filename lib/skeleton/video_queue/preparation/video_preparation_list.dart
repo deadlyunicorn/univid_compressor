@@ -4,6 +4,7 @@ import "package:provider/provider.dart";
 import "package:univid_compressor/core/errors/exceptions.dart";
 import "package:univid_compressor/core/stores/preparation_videos_store.dart";
 import "package:univid_compressor/core/stores/preset_store.dart";
+import "package:univid_compressor/core/stores/types/preparation_video.dart";
 import "package:univid_compressor/core/video_details.dart";
 import "package:univid_compressor/core/widgets.dart";
 import "package:univid_compressor/core/widgets/animated_appearance.dart";
@@ -13,20 +14,19 @@ import "package:univid_compressor/core/widgets/snackbars.dart";
 import "package:univid_compressor/database/database.dart";
 import "package:univid_compressor/skeleton/video_queue/list_container.dart";
 import "package:univid_compressor/skeleton/video_queue/preparation/import_videos_from_file_picker.dart";
-import "package:univid_compressor/skeleton/video_queue/preparation/preparation_video.dart";
 import "package:univid_compressor/skeleton/video_queue/preparation/video_container/video_preview_container.dart";
 
 class VideoPreparationList extends StatelessWidget {
   const VideoPreparationList({
-    required this.preparationVideoList,
     super.key,
   });
-
-  final List<PreparationVideo> preparationVideoList;
 
   //TODO show error indicators when file was moved/deleted/not found
   @override
   Widget build(BuildContext context) {
+    final List<PreparationVideo> preparationVideoList =
+        context.watch<PreparationVideosStore>().preparationVideoList;
+
     final Iterable<PreparationVideo> selectedVideos =
         preparationVideoList.where(
       (PreparationVideo element) => element.isSelected,
@@ -53,22 +53,25 @@ class VideoPreparationList extends StatelessWidget {
           Positioned(
             top: 0,
             left: 0,
-            child: AnimatedAppearance(
-              visibleIf: selectedVideos.isNotEmpty,
-              child: RowWithSpacings(
-                spacing: 8,
-                children: <Widget>[
-                  TextButton(
+            child: RowWithSpacings(
+              spacing: 8,
+              children: <Widget>[
+                AnimatedAppearance(
+                  visibleIf: preparationVideoList.isNotEmpty,
+                  child: TextButton(
                     onPressed: context.read<PreparationVideosStore>().selectAll,
                     child: const Text("Select all"),
                   ),
-                  ErrorButton(
+                ),
+                AnimatedAppearance(
+                  visibleIf: selectedVideos.isNotEmpty,
+                  child: ErrorButton(
                     onPressed:
                         context.read<PreparationVideosStore>().unselectAll,
                     child: const Text("Unselect all"),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           ListContainer(

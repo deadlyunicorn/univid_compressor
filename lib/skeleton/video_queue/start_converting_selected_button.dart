@@ -1,6 +1,9 @@
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import "package:univid_compressor/core/stores/preparation_videos_store.dart";
+import "package:univid_compressor/core/stores/processing_videos_store.dart";
+import "package:univid_compressor/core/stores/types/preparation_video.dart";
+import "package:univid_compressor/core/stores/types/processing_video.dart";
 import "package:univid_compressor/core/widgets/snackbars.dart";
 
 class StartConvertingSelectedButton extends StatelessWidget {
@@ -15,10 +18,26 @@ class StartConvertingSelectedButton extends StatelessWidget {
       textAlign: TextAlign.center,
       message:
           // ignore: lines_longer_than_80_chars
-          "${"Convert queued videos\nwhere there is a preset set\n${context.watch<PreparationVideosStore>().preparationVideoList.length}"} video(s))",
+          "${"Convert queued videos\nwhere there is a preset set\n(${context.watch<PreparationVideosStore>().preparationVideoList.length}"} video(s))",
       child: TextButton(
         onPressed: () async {
-          showNormalSnackbar(context: context, message: "helloWorld!");
+          final Iterable<PreparationVideo> validPreparationVideos =
+              context.read<PreparationVideosStore>().moveWherePresetExists();
+
+          if (validPreparationVideos.isEmpty) {
+            return showErrorSnackbar(
+              context: context,
+              message: "No videos available to process.",
+            );
+          }
+          context.read<ProcessingVideosStore>().addVideos(
+                validPreparationVideos.map(
+                  (PreparationVideo preparationVideo) => ProcessingVideo(
+                    videoDetails: preparationVideo.videoDetails,
+                    preset: preparationVideo.preset!,
+                  ),
+                ),
+              );
         },
         child: const Padding(
           padding: EdgeInsets.symmetric(vertical: 8.0),
