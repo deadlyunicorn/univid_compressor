@@ -4,7 +4,9 @@ import "package:provider/provider.dart";
 import "package:univid_compressor/core/errors/exceptions.dart";
 import "package:univid_compressor/core/stores/preparation_videos_store.dart";
 import "package:univid_compressor/core/stores/preset_store.dart";
+import "package:univid_compressor/core/stores/processing_videos_store.dart";
 import "package:univid_compressor/core/stores/types/preparation_video.dart";
+import "package:univid_compressor/core/stores/types/processing_video.dart";
 import "package:univid_compressor/core/video_details.dart";
 import "package:univid_compressor/core/widgets.dart";
 import "package:univid_compressor/core/widgets/animated_appearance.dart";
@@ -136,6 +138,28 @@ class VideoPreparationList extends StatelessWidget {
                             context
                                 .read<PreparationVideosStore>()
                                 .setPresetForSelected(preset: selectedPreset);
+
+                            final Iterable<PreparationVideo>
+                                validPreparationVideos = context
+                                    .read<PreparationVideosStore>()
+                                    .moveWhereSelected();
+
+                            if (validPreparationVideos.isEmpty) {
+                              return showErrorSnackbar(
+                                context: context,
+                                message: "No videos available to process.",
+                              );
+                            }
+                            context.read<ProcessingVideosStore>().addVideos(
+                                  validPreparationVideos.map(
+                                    (PreparationVideo preparationVideo) =>
+                                        ProcessingVideo(
+                                      videoDetails:
+                                          preparationVideo.videoDetails,
+                                      preset: preparationVideo.preset!,
+                                    ),
+                                  ),
+                                );
                           },
                           child: Text(
                             // ignore: lines_longer_than_80_chars

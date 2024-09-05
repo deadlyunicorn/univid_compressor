@@ -3,11 +3,10 @@ import "package:univid_compressor/core/video_details.dart";
 import "package:univid_compressor/database/database.dart";
 
 abstract class VideoInList {
-
   VideoInList({
     required this.videoDetails,
     Preset? preset,
-  });
+  }) : preset_ = preset;
 
   VideoDetails videoDetails;
 

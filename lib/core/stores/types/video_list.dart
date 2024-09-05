@@ -8,23 +8,43 @@ abstract class AbstractVideoListChangeNotifier<T extends VideoInList>
   List<T> get videoList => _videoList;
 
   ///Returns new videos that should have been added.
-  int addVideos(Iterable<T> candidateVideos) {
-    final Iterable<String> alreadyImportedVideoFileUrls = videoList.map(
-      (T alreadyImportedVideo) =>
-          alreadyImportedVideo.videoDetails.fileReference.path,
-    );
+  void addVideos(Iterable<T> candidateVideos) {
+    final List<String> alreadyImportedVideoFileUrls = videoList
+        .map(
+          (T alreadyImportedVideo) =>
+              alreadyImportedVideo.videoDetails.fileReference.path,
+        )
+        .toList();
 
-    final Iterable<T> newVideos = candidateVideos.where(
-      (T candidateVideo) => !alreadyImportedVideoFileUrls
-          .contains(candidateVideo.videoDetails.fileReference.path),
-    );
+    //STEP 1: Find old videos that were added again by filepath
+    // if the candidateVideo has a preset, then replace it and move it
+    // to the beginning of the list.
+    for (int i = 0; i < candidateVideos.length; i++) {
+      final T candidateVideo = candidateVideos.elementAt(i);
 
-    final int videosToBeAddedLength = newVideos.length;
+      final int indexOfVideo = alreadyImportedVideoFileUrls
+          .indexOf(candidateVideo.videoDetails.fileReference.path);
 
-    videoList.addAll(newVideos);
+      if (indexOfVideo != -1) {
+        final T removedVideo = _videoList.removeAt(indexOfVideo);
+        alreadyImportedVideoFileUrls.insert(
+          0,
+          alreadyImportedVideoFileUrls.removeAt(indexOfVideo),
+        );
+        _videoList.insert(
+          0,
+          candidateVideo.preset != null ? candidateVideo : removedVideo,
+        );
+      } else {
+        alreadyImportedVideoFileUrls.insert(
+          0,
+          candidateVideo.videoDetails.fileReference.path,
+        );
+        _videoList.insert(0, candidateVideo);
+      }
+    }
+
     notifyListeners();
-
-    return videosToBeAddedLength;
   }
 
   void selectAll() {
@@ -58,10 +78,8 @@ abstract class AbstractVideoListChangeNotifier<T extends VideoInList>
     final List<T> newVideoList = videoList.map((T video) {
       if (video.isSelected) {
         video.setPreset(preset);
-        return video..isSelected = false;
-      } else {
-        return video;
       }
+      return video;
     }).toList();
     _videoList = newVideoList;
     notifyListeners();
@@ -79,6 +97,14 @@ abstract class AbstractVideoListChangeNotifier<T extends VideoInList>
     final Iterable<T> videosToMove =
         videoList.where((T video) => video.preset != null);
     _videoList = videoList.where((T video) => video.preset == null).toList();
+    notifyListeners();
+    return videosToMove;
+  }
+
+  Iterable<T> moveWhereSelected() {
+    final Iterable<T> videosToMove =
+        videoList.where((T video) => video.isSelected);
+    _videoList = videoList.where((T video) => !video.isSelected).toList();
     notifyListeners();
     return videosToMove;
   }
