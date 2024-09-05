@@ -3,7 +3,7 @@ import "package:univid_compressor/database/database.dart";
 
 class PreparationVideo extends VideoInList {
 
-  PreparationVideo({required super.videoDetails});
+  PreparationVideo({required super.videoDetails, super.preset});
 
   @override
   void setPreset(Preset preset ) {
