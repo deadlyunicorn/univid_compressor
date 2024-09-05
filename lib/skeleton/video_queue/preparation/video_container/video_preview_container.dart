@@ -2,22 +2,22 @@ import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import "package:univid_compressor/core/business/ffmpeg_entity.dart";
 import "package:univid_compressor/core/business/ffmpeg_helper.dart";
-import "package:univid_compressor/core/stores/types/preparation_video.dart";
+import "package:univid_compressor/core/stores/types/video_in_list.dart";
 import "package:univid_compressor/core/video_details.dart";
 import "package:univid_compressor/core/widgets.dart";
 import "package:univid_compressor/core/widgets/custom_checkbox.dart";
 import "package:univid_compressor/core/widgets/snackbars.dart";
 import "package:univid_compressor/skeleton/video_queue/preparation/video_container/thumbnail.dart";
 
-class VideoPreviewContainer extends StatelessWidget {
+class VideoPreviewContainer<T extends VideoInList> extends StatelessWidget {
   const VideoPreviewContainer({
-    required this.preparationVideo,
+    required this.video,
     required this.updateVideo,
     super.key,
   });
 
-  final PreparationVideo preparationVideo;
-  final void Function(PreparationVideo preparation) updateVideo;
+  final T video;
+  final void Function(T video) updateVideo;
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +36,11 @@ class VideoPreviewContainer extends StatelessWidget {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
-                child: Thumbnail(videoDetails: preparationVideo.videoDetails),
+                child: Thumbnail(videoDetails: video.videoDetails),
               ),
               Tooltip(
-                message: preparationVideo.videoDetails.name,
-                child: Text(preparationVideo.videoDetails.fileNameShort),
+                message: video.videoDetails.name,
+                child: Text(video.videoDetails.fileNameShort),
               ),
               Align(
                 alignment: Alignment.bottomRight,
@@ -50,10 +50,10 @@ class VideoPreviewContainer extends StatelessWidget {
                   children: <Widget>[
                     CustomCheckbox(
                       //TODO Looks misaligned..
-                      isChecked: preparationVideo.isSelected,
+                      isChecked: video.isSelected,
                       onChanged: (bool? isSelected) {
                         updateVideo(
-                          preparationVideo..isSelected = isSelected == true,
+                          video..isSelected = isSelected == true,
                         );
                       },
                     ),
@@ -61,23 +61,24 @@ class VideoPreviewContainer extends StatelessWidget {
                       spacing: 4,
                       children: <Widget>[
                         TemporaryCoolFfmpegButton(
-                          videoDetails: preparationVideo.videoDetails,
+                          videoDetails: video.videoDetails,
                         ),
                         Tooltip(
                           textAlign: TextAlign.center,
                           message:
-                              "Selected Preset: ${preparationVideo.preset?.title ?? "No preset found"}${preparationVideo.preset != null ? "" : ""}", //TODO Display video details here
+                              // ignore: lines_longer_than_80_chars
+                              "Selected Preset: ${video.preset?.title ?? "No preset found"}${video.preset != null ? "" : ""}", //TODO Display video details here
                           child: Icon(
-                            color: preparationVideo.preset != null
+                            color: video.preset != null
                                 ? Theme.of(context).colorScheme.secondary
                                 : Theme.of(context).colorScheme.error,
-                            preparationVideo.preset != null
+                            video.preset != null
                                 ? Icons.domain_verification_rounded
                                 : Icons.pending_actions_rounded,
                           ),
                         ),
                         Text(
-                          preparationVideo.videoDetails.sizeString,
+                          video.videoDetails.sizeString,
                         ),
                       ],
                     ),
