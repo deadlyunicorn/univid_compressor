@@ -83,13 +83,11 @@ class VideoPreparationList extends StatelessWidget {
                       required int index,
                       required PreparationVideo item,
                     }) =>
-                        VideoPreviewContainer(
-                      preparationVideo: item,
+                        VideoPreviewContainer<PreparationVideo>(
+                      video: item,
                       updateVideo: (PreparationVideo preparationVideo) {
-                        context
-                            .read<PreparationVideosStore>()
-                            .updatePreparationVideo(
-                              newPreparationVideo: preparationVideo,
+                        context.read<PreparationVideosStore>().updateVideo(
+                              newVideo: preparationVideo,
                               index: index,
                             );
                       },
