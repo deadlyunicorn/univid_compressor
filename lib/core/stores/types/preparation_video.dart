@@ -1,13 +1,16 @@
-import "package:univid_compressor/core/video_details.dart";
+import "package:univid_compressor/core/stores/types/video_in_list.dart";
 import "package:univid_compressor/database/database.dart";
 
-class PreparationVideo {
-  PreparationVideo({required this.videoDetails});
+class PreparationVideo extends VideoInList {
 
-  VideoDetails videoDetails;
+  PreparationVideo({required super.videoDetails});
+
+  @override
+  void setPreset(Preset preset ) {
+    super.preset_ = preset;
+  }
+
 
   /// We will get the preset properties when the the video
   /// is about to get converted - so as to get the latest change.
-  Preset? preset;
-  bool isSelected = false;
 }
