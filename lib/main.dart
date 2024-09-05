@@ -2,12 +2,23 @@ import "dart:math";
 
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
+import "package:univid_compressor/core/errors/exceptions.dart";
+import "package:univid_compressor/core/widgets/snackbars.dart";
 import "package:univid_compressor/database/database.dart";
 import "package:univid_compressor/skeleton/skeleton.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final AppDatabase database = AppDatabase();
+
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.dumpErrorToConsole(details);
+    final BuildContext? context = navigatorKey.currentState?.context;
+    final Object exception = details.exception;
+    if (context != null && exception is MessageException) {
+      showErrorSnackbar(context: context, message: exception.message);
+    }
+  };
 
   runApp(
     MyApp(
@@ -28,6 +39,7 @@ class MyApp extends StatelessWidget {
     );
 
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: "Univid Compressor",
       theme: ThemeData(
         colorScheme: const ColorScheme(
@@ -120,3 +132,5 @@ class MyApp extends StatelessWidget {
     borderRadius: BorderRadius.all(Radius.circular(4)),
   );
 }
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

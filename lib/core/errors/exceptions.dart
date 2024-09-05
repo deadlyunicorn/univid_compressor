@@ -7,5 +7,15 @@ class FileErrorException implements Exception {
   });
 }
 
+class MessageException implements Exception {
+  MessageException({required this.message});
+  String message;
+}
+
 class SystemNotSupportedException implements Exception {}
+
 class MD5CheckFailedException implements Exception {}
+
+class NotAllowedException extends MessageException {
+  NotAllowedException() : super(message: "Action not allowed");
+}
